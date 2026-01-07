@@ -14,6 +14,33 @@ WebServer server(80);
 const int motorPin = 16; // Change to your motor PWM pin
 int motorSpeed = 0; // 0-255
 
+// HTML content for the web page
+const char* htmlContent = R"rawliteral(
+<!DOCTYPE HTML><html>
+<head>
+  <title>ESP32 Motor Speed Control</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; }
+    h1 { color: #0F3376; padding: 2vh; }
+    .slider { width: 300px; }
+    .value { font-size: 1.2rem; color: #333; }
+  </style>
+</head>
+<body>
+  <h1>ESP32 Motor Speed Control</h1>
+  <p>Set motor speed:</p>
+  <input type="range" min="0" max="255" value="0" class="slider" id="speedSlider" oninput="updateValue(this.value)">
+  <span class="value" id="speedValue">0</span>
+  <script>
+    function updateValue(val) {
+      document.getElementById('speedValue').innerText = val;
+      fetch('/setSpeed?value=' + val);
+    }
+  </script>
+</body>
+</html>
+)rawliteral";
+
 // Function to handle the root path
 void handleRoot() {
   server.send(200, "text/html", htmlContent);
